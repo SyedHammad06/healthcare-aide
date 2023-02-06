@@ -1,15 +1,8 @@
-# Material UI v5 and Next.js example with @mui/styles (in TypeScript)
+# Healthcare Aide Website made using @mui/styles (in TypeScript) with Pocketbase
 
 ## How to use
 
-Download the example [or clone the repo](https://github.com/mui/material-ui):
-
 <!-- #default-branch-switch -->
-
-```sh
-curl https://codeload.github.com/mui/material-ui/tar.gz/master | tar -xz --strip=2  material-ui-master/examples/nextjs-with-typescript
-cd nextjs-with-typescript
-```
 
 Install it and run:
 
@@ -18,25 +11,34 @@ npm install
 npm run dev
 ```
 
-or:
+## About :-
 
-<!-- #default-branch-switch -->
+The application is designed to streamline the healthcare experience for patients by providing a centralized platform to track their medical history, book appointments with doctors, order lab tests, and purchase medications. Patients can easily view their past medical records and test results, schedule upcoming appointments, and order necessary lab tests with just a few clicks.
 
-[![Edit on StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/mui/material-ui/tree/master/examples/nextjs-with-typescript-v4-migration)
+They can also purchase prescribed medicines directly from the app. The app will also allow them to access the prescriptions, discharge summary and lab reports from the app. Appointments can be scheduled with doctors from different specialties and patients can receive reminders for upcoming appointments and lab tests. The application will help patients to manage their healthcare more efficiently, while also reducing the workload on healthcare providers.
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui/material-ui/tree/master/examples/nextjs-with-typescript-v4-migration)
+## Module Description :-
 
-## The idea behind the example
+Create / store medical records :-
+Allows healthcare providers to store and manage patient medical records, including notes from consultations, test results, and prescriptions.
 
-The project uses [Next.js](https://github.com/vercel/next.js), which is a framework for server-rendered React apps.
-It includes `@mui/material` and its peer dependencies, including `emotion`, the default style engine in Material UI v5. If you prefer, you can [use styled-components instead](https://mui.com/material-ui/guides/interoperability/#styled-components).
-It also includes `@mui/styles`, the legacy styling solution that uses JSS as an engine.
-It provides all the necessary config for working with both Emotion and JSS for server-side rendering.
-The project is intended as a basic starter for migrating your application from v4 to v5, as it lets the JSS style overrides take precedence over the default styles passed to the components by Emotion.
-It demonstrates what results after handling v5's breaking changes to the [theme](https://mui.com/material-ui/migration/v5-style-changes/) and [components](https://mui.com/material-ui/migration/v5-component-changes/).
+View medical records / lab tests :-
+Allows patients and healthcare professionals to view records / lab tests. This can be helpful for insurance companies to know the patient’s medical background.
 
-## The Link component
+Book appointments with doctors :-
+Allows patients to search for and book appointments with healthcare providers online, and providers to manage their appointment schedules.
 
-Next.js has [a custom Link component](https://nextjs.org/docs/api-reference/next/link).
-The example folder provides adapters for usage with Material UI.
-You can find more information [in the documentation](https://mui.com/material-ui/guides/routing/#next-js).
+Order lab tests :-
+Allows patients to book laboratory tests online, and view their results.
+
+Purchase medicines :-
+Allows patients to order and receive medications from online or nearby pharmacies.
+
+Analytics :-  
+Allows tracking patient and healthcare provider behavior, financial transactions and other reporting.
+
+Remainders :-
+Allows sending notifications and reminders to patients and healthcare providers about upcoming appointments, lab tests and surgeries.
+
+Payment :-
+Allows patients to make payments for consultations, laboratory tests, and other healthcare services online.
