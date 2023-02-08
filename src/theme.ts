@@ -22,27 +22,27 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Sofia Sans, sans-serif',
     h1: {
-      fontSize: '5rem',
+      fontSize: '4rem',
       fontWeight: 700,
     },
     h2: {
-      fontSize: '4rem',
+      fontSize: '3.5rem',
       fontWeight: 600,
     },
     h3: {
-      fontSize: '3.5rem',
+      fontSize: '2rem',
       fontWeight: 500,
     },
     h4: {
-      fontSize: '3rem',
-      fontWeight: 400,
-    },
-    h5: {
       fontSize: '2.5rem',
       fontWeight: 400,
     },
-    h6: {
+    h5: {
       fontSize: '2rem',
+      fontWeight: 400,
+    },
+    h6: {
+      fontSize: '1.8rem',
       fontWeight: 400,
     },
   },
