@@ -6,6 +6,7 @@ import Link from '../src/Link';
 import Notifications from '@mui/icons-material/Notifications';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { makeStyles } from '@mui/styles';
+import IconButton from '@mui/material/IconButton';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
     '& ul': {
       display: 'flex',
-      gap: '2rem',
+      gap: '1rem',
     },
 
     '& li': {
@@ -44,12 +45,13 @@ const useStyles = makeStyles((theme) => ({
       opacity: '50%',
       textDecoration: 'none',
       fontSize: '1.2rem',
+      padding: '0.5rem',
     },
   },
 
   navIcon: {
     display: 'flex',
-    gap: '1rem',
+    gap: '0.5rem',
   },
 }));
 
@@ -86,8 +88,12 @@ export const Navbar: NextPage = () => {
           </li>
         </ul>
         <div className={classes.navIcon}>
-          <Notifications color='secondary' fontSize='large' />
-          <AccountCircle color='secondary' fontSize='large' />
+          <IconButton aria-label='notifications'>
+            <Notifications color='secondary' fontSize='large' />
+          </IconButton>
+          <IconButton aria-label='user profile'>
+            <AccountCircle color='secondary' fontSize='large' />
+          </IconButton>
         </div>
       </nav>
     </Container>

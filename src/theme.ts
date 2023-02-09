@@ -30,7 +30,7 @@ const theme = createTheme({
       fontWeight: 600,
     },
     h3: {
-      fontSize: '2rem',
+      fontSize: '3rem',
       fontWeight: 500,
     },
     h4: {
@@ -42,7 +42,7 @@ const theme = createTheme({
       fontWeight: 400,
     },
     h6: {
-      fontSize: '1.8rem',
+      fontSize: '1.6rem',
       fontWeight: 400,
     },
   },
