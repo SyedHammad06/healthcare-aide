@@ -7,6 +7,7 @@ import Notifications from '@mui/icons-material/Notifications';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -14,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '1rem',
+    marginLeft: '0.5rem',
 
     '& svg': {
       width: '2.5rem',
@@ -59,14 +61,13 @@ export const Navbar: NextPage = () => {
   const classes = useStyles();
 
   return (
-    <Container
-      maxWidth='xl'
+    <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: 'primary.light',
-        paddingY: 2,
+        padding: 2,
       }}
     >
       <header className={classes.header}>
@@ -96,6 +97,6 @@ export const Navbar: NextPage = () => {
           </IconButton>
         </div>
       </nav>
-    </Container>
+    </Box>
   );
 };
