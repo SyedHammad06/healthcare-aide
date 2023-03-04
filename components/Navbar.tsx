@@ -8,6 +8,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -59,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Navbar: NextPage = () => {
   const classes = useStyles();
+  const router = useRouter();
 
   return (
     <Box
@@ -92,7 +94,10 @@ export const Navbar: NextPage = () => {
           <IconButton aria-label='notifications'>
             <Notifications color='secondary' fontSize='large' />
           </IconButton>
-          <IconButton aria-label='user profile'>
+          <IconButton
+            aria-label='user profile'
+            onClick={() => router.replace('/login')}
+          >
             <AccountCircle color='secondary' fontSize='large' />
           </IconButton>
         </div>
