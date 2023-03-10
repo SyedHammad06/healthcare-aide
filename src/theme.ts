@@ -26,19 +26,19 @@ const theme = createTheme({
       fontWeight: 700,
     },
     h2: {
-      fontSize: '3.5rem',
+      fontSize: '3rem',
       fontWeight: 600,
     },
     h3: {
-      fontSize: '3rem',
+      fontSize: '2.5rem',
       fontWeight: 500,
     },
     h4: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
       fontWeight: 400,
     },
     h5: {
-      fontSize: '2rem',
+      fontSize: '1.8rem',
       fontWeight: 400,
     },
     h6: {
