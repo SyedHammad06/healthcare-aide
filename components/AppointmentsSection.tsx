@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   cardContainer: {
     display: 'flex',
     gap: '1rem',
-    marginTop: '2rem',
+    margin: '2rem 0',
     overflowX: 'hidden',
   },
   card: {

@@ -43,7 +43,7 @@ export const Counter: NextPage = () => {
 
   return (
     <div className={classes.counter}>
-      <Paper className={classes.paper} elevation={8}>
+      <Paper className={classes.paper} elevation={4}>
         {counterData.map((el, i) => (
           <div key={i} className={classes.stats}>
             <Typography variant='h4' color='secondary' sx={{ fontWeight: 600 }}>
