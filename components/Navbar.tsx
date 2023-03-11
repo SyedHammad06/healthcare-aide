@@ -9,6 +9,9 @@ import { makeStyles } from '@mui/styles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Image from 'next/image';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -51,16 +54,49 @@ const useStyles = makeStyles((theme) => ({
       padding: '0.5rem',
     },
   },
-
   navIcon: {
     display: 'flex',
     gap: '0.5rem',
+  },
+  avatarContainer: {
+    padding: '0.3rem',
+    display: 'grid',
+    placeItems: 'center',
+    backgroundColor: theme.palette.secondary.main,
+    borderRadius: '50%',
   },
 }));
 
 export const Navbar: NextPage = () => {
   const classes = useStyles();
   const router = useRouter();
+
+  const [avatar, setAvatar] = useState('');
+
+  useEffect(() => {
+    console.log(router.query.id);
+    (async () => {
+      if (router.query.id) {
+        const user = await axios
+          .get(
+            `http://127.0.0.1:8090/api/collections/users/records/${router.query.id}`
+          )
+          .then((res) => res.data);
+        console.log(user);
+        if (user.avatar) {
+          setAvatar(user.avatar);
+        }
+      }
+    })();
+  }, []);
+
+  const onUserIconClick = () => {
+    if (!router.query.id) {
+      router.push('/login');
+    } else {
+      router.push(`/user?id=${router.query.id}`);
+    }
+  };
 
   return (
     <Box
@@ -94,11 +130,19 @@ export const Navbar: NextPage = () => {
           <IconButton aria-label='notifications'>
             <Notifications color='secondary' fontSize='large' />
           </IconButton>
-          <IconButton
-            aria-label='user profile'
-            onClick={() => router.replace('/login')}
-          >
-            <AccountCircle color='secondary' fontSize='large' />
+          <IconButton aria-label='user profile' onClick={onUserIconClick}>
+            {avatar ? (
+              <div className={classes.avatarContainer}>
+                <Image
+                  src={`http://127.0.0.1:8090/api/files/users/${router.query.id}/${avatar}`}
+                  width='40'
+                  height='40'
+                  alt='user avatar'
+                />
+              </div>
+            ) : (
+              <AccountCircle color='secondary' fontSize='large' />
+            )}
           </IconButton>
         </div>
       </nav>

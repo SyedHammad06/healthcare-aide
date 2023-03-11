@@ -153,7 +153,7 @@ const SignUpPage: NextPage = () => {
             .post('http://127.0.0.1:8090/api/collections/users/records', body)
             .then((res) => res.data);
           if (data) {
-            router.replace('/');
+            router.replace(`/?id=${data.id}`);
           }
         } catch (error: any) {
           setError(error.message);
@@ -187,6 +187,7 @@ const SignUpPage: NextPage = () => {
               </InputAdornment>
             }
             inputRef={nameRef}
+            placeholder='John Doe'
             required
             fullWidth
           />
@@ -206,6 +207,7 @@ const SignUpPage: NextPage = () => {
               </InputAdornment>
             }
             inputRef={emailRef}
+            placeholder='johndoe@example.com'
             required
             fullWidth
           />
@@ -229,6 +231,7 @@ const SignUpPage: NextPage = () => {
               maxLength: 12,
             }}
             inputRef={phoneRef}
+            placeholder='XXXX XXXX XX'
             required
             fullWidth
           />
@@ -265,6 +268,7 @@ const SignUpPage: NextPage = () => {
               minLength: 7,
             }}
             inputRef={passwordRef}
+            placeholder='*******'
             required
             fullWidth
           />
@@ -301,6 +305,7 @@ const SignUpPage: NextPage = () => {
               minLength: 7,
             }}
             inputRef={confirmPasswordRef}
+            placeholder='*******'
             required
             fullWidth
           />

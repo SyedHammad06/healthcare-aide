@@ -11,6 +11,7 @@ import Image from 'next/image';
 import Logo from '../public/images/logo-light.png';
 import Typography from '@mui/material/Typography';
 import CopyrightIcon from '@mui/icons-material/Copyright';
+import { useRouter } from 'next/router';
 
 export type AppointmentType = {
   id: string;
@@ -51,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
 
 const HomePage: NextPage = () => {
   const classes = useStyles();
+
+  const router = useRouter();
+
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
 
   useEffect(() => {

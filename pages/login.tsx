@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'uppercase',
   },
   form: {
+    position: 'relative',
     width: '100%',
     padding: '5rem 5rem 0 5rem',
     display: 'flex',
@@ -89,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
   },
   error: {
     position: 'absolute',
-    bottom: '1rem',
+    bottom: '-3rem',
     left: '1rem',
 
     '& > div': {
@@ -114,7 +115,6 @@ const LoginPage: NextPage = () => {
   const loginSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (emailRef.current && passwordRef.current) {
-      console.log(emailRef.current.value, passwordRef.current.value);
       try {
         const users = await axios
           .get(
@@ -132,13 +132,13 @@ const LoginPage: NextPage = () => {
           );
 
           if (password) {
-            router.replace('/');
+            router.replace(`/?id=${users.id}`);
           } else {
             setError('Password incorrect!');
           }
         }
       } catch (error) {
-        setError('User not Found!');
+        setError('Email or Password incorrect!');
       }
     }
   };
@@ -166,6 +166,7 @@ const LoginPage: NextPage = () => {
               </InputAdornment>
             }
             inputRef={emailRef}
+            placeholder='johndoe@example.com'
             required
             fullWidth
           />
@@ -199,6 +200,7 @@ const LoginPage: NextPage = () => {
               </InputAdornment>
             }
             inputRef={passwordRef}
+            placeholder='*******'
             required
             fullWidth
           />
