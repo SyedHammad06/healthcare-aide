@@ -88,11 +88,13 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
   },
   error: {
-    minWidth: '15rem',
     position: 'absolute',
     bottom: '1rem',
     left: '1rem',
-    fontSize: '1.1rem',
+
+    '& > div': {
+      fontSize: '1.1rem',
+    },
   },
 }));
 
@@ -142,7 +144,7 @@ const LoginPage: NextPage = () => {
   };
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <div className={classes.top}>
         <Typography variant='h1' className={classes.heading}>
           Login
@@ -218,21 +220,17 @@ const LoginPage: NextPage = () => {
       </form>
       {error ? (
         <Snackbar
+          className={classes.error}
           open={error ? true : false}
           autoHideDuration={5000}
           onClose={() => setError('')}
         >
-          <Alert
-            className={classes.error}
-            variant='filled'
-            severity='error'
-            onClose={() => setError('')}
-          >
+          <Alert variant='filled' severity='error' onClose={() => setError('')}>
             {error}
           </Alert>
         </Snackbar>
       ) : null}
-    </>
+    </div>
   );
 };
 
