@@ -7,11 +7,8 @@ import { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { Testimonials } from '../components/Testimonials';
 import axios from 'axios';
-import Image from 'next/image';
-import Logo from '../public/images/logo-light.png';
-import Typography from '@mui/material/Typography';
-import CopyrightIcon from '@mui/icons-material/Copyright';
 import { useRouter } from 'next/router';
+import { Footer } from '../components/Footer';
 
 export type AppointmentType = {
   id: string;
@@ -26,28 +23,6 @@ const useStyles = makeStyles((theme) => ({
     borderTop: '1px solid rgba(150, 150, 150, 0.5)',
   },
   logo: {},
-  footer: {
-    color: 'white',
-    padding: '20px 40px',
-    textAlign: 'center',
-    backgroundColor: theme.palette.primary.main,
-
-    '& > div': {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: '2rem',
-      margin: '30px 0',
-    },
-
-    '& span': {
-      fontSize: '1.2rem',
-    },
-
-    '& > div:last-of-type': {
-      gap: '0.5rem',
-    },
-  },
 }));
 
 const HomePage: NextPage = () => {
@@ -56,6 +31,7 @@ const HomePage: NextPage = () => {
   const router = useRouter();
 
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -66,31 +42,25 @@ const HomePage: NextPage = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.id && typeof router.query.id === 'string') {
+        setUserId(router.query.id);
+      }
+    }
+  }, [router.isReady]);
+
   return (
     <>
       <Navbar />
       <main>
         <Hero />
         <Counter />
-        <AppointmentSection appointments={appointments} />
+        <AppointmentSection userId={userId} appointments={appointments} />
         <hr className={classes.hr} />
         <Testimonials />
       </main>
-      <footer className={classes.footer}>
-        <div>
-          <Image src={Logo} alt='logo' className={classes.logo} />
-          <Typography variant='h1'>Healthcare Aide</Typography>
-        </div>
-        <div>
-          <Typography variant='body1' component='span'>
-            Copyright
-          </Typography>
-          <CopyrightIcon />
-          <Typography variant='body1' component='span'>
-            2023, Healthcare Aide. All rights registered.
-          </Typography>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 };

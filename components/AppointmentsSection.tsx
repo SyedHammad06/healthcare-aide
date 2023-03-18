@@ -9,6 +9,7 @@ import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   appointment: {
@@ -33,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 'calc(25% - 0.8rem)',
     backgroundColor: theme.palette.primary.main,
     color: 'white',
+
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   cardMedia: {
     height: 200,
@@ -78,10 +83,15 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   appointments: AppointmentType[];
+  userId: string;
 };
 
-export const AppointmentSection: NextPage<Props> = ({ appointments }) => {
+export const AppointmentSection: NextPage<Props> = ({
+  appointments,
+  userId,
+}) => {
   const classes = useStyles();
+  const router = useRouter();
 
   const appointmentContainerRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +114,14 @@ export const AppointmentSection: NextPage<Props> = ({ appointments }) => {
     }
   };
 
+  const changeRoute = (field: string) => {
+    if (userId) {
+      router.push(`/appointment/${field}?id=${userId}`);
+    } else {
+      router.push(`/appointment/${field}`);
+    }
+  };
+
   return (
     <div className={classes.appointment}>
       <Typography variant='h2' color='primary' className={classes.heading}>
@@ -120,7 +138,11 @@ export const AppointmentSection: NextPage<Props> = ({ appointments }) => {
       <div className={classes.relative}>
         <div className={classes.cardContainer} ref={appointmentContainerRef}>
           {appointments.map((el) => (
-            <Card key={el.id} className={classes.card}>
+            <Card
+              key={el.id}
+              className={classes.card}
+              onClick={() => changeRoute(el.id)}
+            >
               <CardMedia
                 className={classes.cardMedia}
                 component='img'

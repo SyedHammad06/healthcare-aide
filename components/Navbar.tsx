@@ -29,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
     '& h2': {
       fontWeight: 700,
     },
+
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
 
   nav: {
@@ -74,7 +78,6 @@ export const Navbar: NextPage = () => {
   const [avatar, setAvatar] = useState('');
 
   useEffect(() => {
-    console.log(router.query.id);
     (async () => {
       if (router.query.id) {
         const user = await axios
@@ -98,6 +101,14 @@ export const Navbar: NextPage = () => {
     }
   };
 
+  const onLogoIconClick = () => {
+    if (!router.query.id) {
+      router.push('/');
+    } else {
+      router.push(`/?id=${router.query.id}`);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -108,7 +119,7 @@ export const Navbar: NextPage = () => {
         padding: 2,
       }}
     >
-      <header className={classes.header}>
+      <header className={classes.header} onClick={onLogoIconClick}>
         <Logo />
         <Typography variant='h6' component='h2' color='secondary'>
           Healthcare Aide

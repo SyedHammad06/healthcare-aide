@@ -20,6 +20,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import axios from 'axios';
+import Upload from '@mui/icons-material/Upload';
+import SchoolIcon from '@mui/icons-material/School';
 import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
@@ -90,6 +92,16 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
   },
+  special: {
+    position: 'absolute',
+    left: '14.2rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
+  upload: {
+    fontSize: '1.2rem',
+    padding: '0.5rem 2rem',
+  },
   error: {
     position: 'absolute',
     bottom: '1rem',
@@ -107,8 +119,11 @@ const SignUpPage: NextPage = () => {
 
   //* State variables
   const [error, setError] = useState('');
+  const [page, setPage] = useState(false);
+  const [next, setNext] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  const [certificate, setCertificate] = useState({});
 
   //* Ref variables
   const nameRef = useRef<HTMLInputElement>(null);
@@ -117,6 +132,18 @@ const SignUpPage: NextPage = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
   const isDoctorRef = useRef<HTMLInputElement>(null);
+  const qualificationRef = useRef<HTMLInputElement>(null);
+
+  //* Certificate upload
+  const certificateUpload = (e: any) => {
+    console.log(e.target.files[0]);
+    try {
+      const file = e.target.files[0];
+      setCertificate(file);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
 
   //* Submit function
   const signUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -130,16 +157,6 @@ const SignUpPage: NextPage = () => {
       isDoctorRef.current
     ) {
       if (passwordRef.current.value === confirmPasswordRef.current.value) {
-        const body = {
-          name: nameRef.current.value,
-          email: emailRef.current.value,
-          phoneRef: phoneRef.current.value,
-          password: passwordRef.current.value,
-          passwordConfirm: confirmPasswordRef.current.value,
-          isDoctor: isDoctorRef.current.checked,
-          emailVisibility: true,
-        };
-
         try {
           const user = await axios
             .get(
@@ -149,18 +166,260 @@ const SignUpPage: NextPage = () => {
           if (user.items.length > 0) {
             throw new Error('User already present!');
           }
-          const data = await axios
-            .post('http://127.0.0.1:8090/api/collections/users/records', body)
-            .then((res) => res.data);
-          if (data) {
-            router.replace(`/?id=${data.id}`);
+
+          const body = {
+            name: nameRef.current.value,
+            email: emailRef.current.value,
+            phoneRef: phoneRef.current.value,
+            password: passwordRef.current.value,
+            passwordConfirm: confirmPasswordRef.current.value,
+            isDoctor: isDoctorRef.current.checked,
+            emailVisibility: true,
+            certificate: {},
+            degrees: '',
+          };
+
+          console.log(body);
+
+          if (isDoctorRef.current.checked) {
+            setPage(true);
+            setNext(false);
+          } else {
+            const data = await axios
+              .post('http://127.0.0.1:8090/api/collections/users/records', body)
+              .then((res) => res.data);
+            if (data) {
+              router.replace(`/?id=${data.id}`);
+            }
+          }
+          if (page) {
+            if (certificate && qualificationRef.current) {
+              body.certificate = certificate;
+              body.degrees = qualificationRef.current.value;
+
+              console.log(body);
+
+              const data = await axios
+                .post(
+                  'http://127.0.0.1:8090/api/collections/users/records',
+                  body
+                )
+                .then((res) => res.data);
+              if (data) {
+                router.replace(`/?id=${data.id}`);
+              }
+            }
           }
         } catch (error: any) {
+          console.log(error);
           setError(error.message);
         }
       } else {
         setError("Passwords don't match");
       }
+    }
+  };
+
+  const displayForm = (page: boolean) => {
+    if (!page) {
+      return (
+        <>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='name'>
+              Name :
+            </FormLabel>
+            <Input
+              id='name'
+              type='text'
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <Person fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              inputRef={nameRef}
+              placeholder='John Doe'
+              required
+              fullWidth
+            />
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='email'>
+              Email Address :
+            </FormLabel>
+            <Input
+              id='email'
+              type='email'
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <Email fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              inputRef={emailRef}
+              placeholder='johndoe@example.com'
+              required
+              fullWidth
+            />
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='phone'>
+              Phone number :
+            </FormLabel>
+            <Input
+              id='phone'
+              type='number'
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <LocalPhoneIcon fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              inputProps={{
+                minLength: 10,
+                maxLength: 12,
+              }}
+              inputRef={phoneRef}
+              placeholder='XXXX XXXX XX'
+              required
+              fullWidth
+            />
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='password'>
+              Password :
+            </FormLabel>
+            <Input
+              id='password'
+              type={showPassword ? 'text' : 'password'}
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <Password fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              endAdornment={
+                <InputAdornment position='end'>
+                  <IconButton
+                    aria-label='show password'
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <VisibilityOff fontSize='medium' color='primary' />
+                    ) : (
+                      <Visibility fontSize='medium' color='primary' />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+              inputProps={{
+                minLength: 7,
+              }}
+              inputRef={passwordRef}
+              placeholder='*******'
+              required
+              fullWidth
+            />
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='passwordConfirm'>
+              Confirm Password :
+            </FormLabel>
+            <Input
+              id='passwordConfirm'
+              type={showConfirmPassword ? 'text' : 'password'}
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <Password fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              endAdornment={
+                <InputAdornment position='end'>
+                  <IconButton
+                    aria-label='show password'
+                    onClick={() => setConfirmShowPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <VisibilityOff fontSize='medium' color='primary' />
+                    ) : (
+                      <Visibility fontSize='medium' color='primary' />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+              inputProps={{
+                minLength: 7,
+              }}
+              inputRef={confirmPasswordRef}
+              placeholder='*******'
+              required
+              fullWidth
+            />
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormControlLabel
+              control={
+                <Switch onClick={() => setNext(!next)} inputRef={isDoctorRef} />
+              }
+              label='Are you a doctor?'
+              className={classes.switch}
+            />
+          </FormControl>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label}>Registration :</FormLabel>
+            <input
+              id='certificate'
+              accept='images/*'
+              type='file'
+              onChange={certificateUpload}
+              hidden
+            />
+            <label htmlFor='certificate' className={classes.special}>
+              <Button
+                className={classes.upload}
+                variant='contained'
+                component='span'
+                startIcon={<Upload fontSize='large' />}
+                color='primary'
+              >
+                Upload Certificate
+              </Button>
+            </label>
+          </FormControl>
+          <FormControl className={classes.field}>
+            <FormLabel className={classes.label} htmlFor='degree'>
+              Degree &#x28;Qualification&#x29; :
+            </FormLabel>
+            <Input
+              id='degree'
+              type='text'
+              color='primary'
+              className={classes.input}
+              startAdornment={
+                <InputAdornment position='start'>
+                  <SchoolIcon fontSize='large' color='primary' />
+                </InputAdornment>
+              }
+              inputRef={qualificationRef}
+              placeholder='MBBS, MD, DM, etc'
+              autoComplete='off'
+              required
+              fullWidth
+            />
+          </FormControl>
+        </>
+      );
     }
   };
 
@@ -172,158 +431,14 @@ const SignUpPage: NextPage = () => {
         </Typography>
       </div>
       <form className={classes.form} onSubmit={signUpSubmit}>
-        <FormControl className={classes.field}>
-          <FormLabel className={classes.label} htmlFor='name'>
-            Name :
-          </FormLabel>
-          <Input
-            id='name'
-            type='text'
-            color='primary'
-            className={classes.input}
-            startAdornment={
-              <InputAdornment position='start'>
-                <Person fontSize='large' color='primary' />
-              </InputAdornment>
-            }
-            inputRef={nameRef}
-            placeholder='John Doe'
-            required
-            fullWidth
-          />
-        </FormControl>
-        <FormControl className={classes.field}>
-          <FormLabel className={classes.label} htmlFor='email'>
-            Email Address :
-          </FormLabel>
-          <Input
-            id='email'
-            type='email'
-            color='primary'
-            className={classes.input}
-            startAdornment={
-              <InputAdornment position='start'>
-                <Email fontSize='large' color='primary' />
-              </InputAdornment>
-            }
-            inputRef={emailRef}
-            placeholder='johndoe@example.com'
-            required
-            fullWidth
-          />
-        </FormControl>
-        <FormControl className={classes.field}>
-          <FormLabel className={classes.label} htmlFor='phone'>
-            Phone number :
-          </FormLabel>
-          <Input
-            id='phone'
-            type='number'
-            color='primary'
-            className={classes.input}
-            startAdornment={
-              <InputAdornment position='start'>
-                <LocalPhoneIcon fontSize='large' color='primary' />
-              </InputAdornment>
-            }
-            inputProps={{
-              minLength: 10,
-              maxLength: 12,
-            }}
-            inputRef={phoneRef}
-            placeholder='XXXX XXXX XX'
-            required
-            fullWidth
-          />
-        </FormControl>
-        <FormControl className={classes.field}>
-          <FormLabel className={classes.label} htmlFor='password'>
-            Password :
-          </FormLabel>
-          <Input
-            id='password'
-            type={showPassword ? 'text' : 'password'}
-            color='primary'
-            className={classes.input}
-            startAdornment={
-              <InputAdornment position='start'>
-                <Password fontSize='large' color='primary' />
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment position='end'>
-                <IconButton
-                  aria-label='show password'
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <VisibilityOff fontSize='medium' color='primary' />
-                  ) : (
-                    <Visibility fontSize='medium' color='primary' />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-            inputProps={{
-              minLength: 7,
-            }}
-            inputRef={passwordRef}
-            placeholder='*******'
-            required
-            fullWidth
-          />
-        </FormControl>
-        <FormControl className={classes.field}>
-          <FormLabel className={classes.label} htmlFor='passwordConfirm'>
-            Confirm Password :
-          </FormLabel>
-          <Input
-            id='passwordConfirm'
-            type={showConfirmPassword ? 'text' : 'password'}
-            color='primary'
-            className={classes.input}
-            startAdornment={
-              <InputAdornment position='start'>
-                <Password fontSize='large' color='primary' />
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment position='end'>
-                <IconButton
-                  aria-label='show password'
-                  onClick={() => setConfirmShowPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <VisibilityOff fontSize='medium' color='primary' />
-                  ) : (
-                    <Visibility fontSize='medium' color='primary' />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-            inputProps={{
-              minLength: 7,
-            }}
-            inputRef={confirmPasswordRef}
-            placeholder='*******'
-            required
-            fullWidth
-          />
-        </FormControl>
-        <FormControl className={classes.field}>
-          <FormControlLabel
-            control={<Switch inputRef={isDoctorRef} />}
-            label='Are you a doctor?'
-            className={classes.switch}
-          />
-        </FormControl>
+        {displayForm(page)}
         <Button
           className={classes.button}
           variant='contained'
           type='submit'
           fullWidth
         >
-          Sign up
+          {next ? 'Next' : 'Sign up'}
         </Button>
         <Link className={classes.alt} href='/login'>
           Already have an account? Login
