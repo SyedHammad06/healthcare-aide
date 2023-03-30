@@ -25,30 +25,9 @@ import AfternoonImg from '../../public/images/afternoon.png';
 import EveningImg from '../../public/images/evening.png';
 import NightImg from '../../public/images/night.png';
 import Link from '../../src/Link';
+import { Search } from '../../components/Search';
 
 const useStyles = makeStyles((theme) => ({
-  search: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    gap: '1rem',
-    padding: '0.5rem 1.5rem',
-  },
-  field: {
-    flex: '100%',
-    margin: '0.5rem 0',
-
-    '& input': {
-      fontSize: '1.2rem',
-    },
-  },
-  select: {
-    fontSize: '1.2rem',
-  },
-  hr: {
-    height: 0,
-    borderTop: '1px solid rgba(150, 150, 150, 0.5)',
-  },
   container: {
     padding: '0.5rem 1.5rem 1rem 1.5rem',
   },
@@ -154,6 +133,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     borderRadius: '0.5rem',
     textAlign: 'center',
+  },
+  hr: {
+    height: 0,
+    borderTop: '1px solid rgba(150, 150, 150, 0.5)',
   },
 }));
 
@@ -295,42 +278,13 @@ const AppointmentPage: NextPage = () => {
   return (
     <>
       <Navbar />
-      <div className={classes.search}>
-        <TextField
-          id='search'
-          value={searchValue}
-          variant='standard'
-          placeholder={`Search ${title}`}
-          className={classes.field}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon color='secondary' />
-              </InputAdornment>
-            ),
-          }}
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-        <FormControl variant='standard' sx={{ m: 1, minWidth: 200 }}>
-          <Select
-            id='select'
-            value={selectValue}
-            className={classes.select}
-            startAdornment={
-              <InputAdornment position='start'>
-                <LocationOnIcon color='secondary' />
-              </InputAdornment>
-            }
-            onChange={(e) => setSelectValue(e.target.value)}
-          >
-            <MenuItem value='Bengaluru' selected>
-              Bengaluru
-            </MenuItem>
-            <MenuItem value='Mysore'>Mysore</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
-      <hr className={classes.hr} />
+      <Search
+        title={title}
+        searchValue={searchValue}
+        selectValue={selectValue}
+        setSearchValue={setSearchValue}
+        setSelectValue={setSelectValue}
+      />
       <div className={classes.container}>
         <Typography variant='h4' component='h2' className={classes.heading}>
           <span>{title}</span>'s available in {selectValue}

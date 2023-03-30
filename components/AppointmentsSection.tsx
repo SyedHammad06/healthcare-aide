@@ -118,7 +118,7 @@ export const AppointmentSection: NextPage<Props> = ({
     if (userId) {
       router.push(`/appointment/${field}?id=${userId}`);
     } else {
-      router.push(`/appointment/${field}`);
+      router.push(`/login`);
     }
   };
 

@@ -151,6 +151,7 @@ export const Hero: NextPage = () => {
               alt='Hero image'
               layout='fill'
               objectFit='contain'
+              placeholder='blur'
             />
           </div>
         </div>

@@ -91,7 +91,7 @@ export const Navbar: NextPage = () => {
         }
       }
     })();
-  }, []);
+  }, [router.isReady]);
 
   const onUserIconClick = () => {
     if (!router.query.id) {
