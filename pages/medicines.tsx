@@ -12,6 +12,12 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { Footer } from '../components/Footer';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Pagination from '@mui/material/Pagination';
+import { useRouter } from 'next/router';
+import Badge from '@mui/material/Badge';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,9 +39,12 @@ const useStyles = makeStyles((theme) => ({
     height: 200,
   },
   cardContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     '& p': {
       display: '-webkit-box',
-      '-webkit-line-clamp': 2,
+      '-webkit-line-clamp': 1,
       '-webkit-box-orient': 'vertical',
       overflow: 'hidden',
     },
@@ -55,6 +64,24 @@ const useStyles = makeStyles((theme) => ({
   countBtn: {
     minWidth: '3rem',
     padding: '0.6rem 0',
+  },
+  flex: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  pagination: {
+    width: '100%',
+    margin: '2rem 0',
+    display: 'grid',
+    placeItems: 'center',
+  },
+  price: {
+    width: '100%',
+    fontWeight: 600,
+    marginTop: '0.5rem',
+    textAlign: 'end',
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -76,12 +103,17 @@ type CountType = {
 
 const MedicinesPage: NextPage = () => {
   const classes = useStyles();
+  const router = useRouter();
 
+  //* State variables
   const [searchValue, setSearchValue] = useState('');
   const [count, setCount] = useState<CountType[]>([]);
   const [medicines, setMedicines] = useState<MedicineDataType[]>([]);
   const [error, setError] = useState('');
+  const [added, setAdded] = useState(false);
+  const [userId, setUserId] = useState('');
 
+  //* useEffects
   useEffect(() => {
     (async () => {
       try {
@@ -97,15 +129,54 @@ const MedicinesPage: NextPage = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (router.isReady) {
+      router.query.id && typeof router.query.id === 'string'
+        ? setUserId(router.query.id)
+        : null;
+    }
+  }, [router.isReady]);
+
+  //* User Defined Functions
   const updateCount = (id: string, type?: boolean) => {
-    const medicine = count.filter((el: CountType) => el.id === id);
+    const medicine = count.find((el: CountType) => el.id === id);
     if (medicine) {
-      console.log(medicine);
-      type ? medicine[0].count + 1 : medicine[0].count - 1;
-      setCount([...count, medicine[0]]);
+      medicine.count = type
+        ? medicine.count + 1
+        : medicine.count > 1
+        ? medicine.count - 1
+        : 1;
+      setCount([...count.filter((el) => el.id !== id), medicine]);
     } else {
-      setCount([...count, { id: id, count: 1 }]);
-      return 1;
+      setCount([...count, { id: id, count: 2 }]);
+    }
+  };
+
+  const addToCart = async (id: string) => {
+    const item = medicines.find((el) => el.id === id);
+    const quantity = count.find((el) => el.id === id);
+    if (item && quantity && userId) {
+      const cartDetails = {
+        name: item.name,
+        user_id: userId,
+        quantity: quantity.count,
+        price: item.price,
+        image: item.image,
+        total: (item.price * quantity.count).toFixed(2),
+      };
+      try {
+        const cartRes = await axios.post(
+          'http://127.0.0.1:8090/api/collections/cart/records',
+          cartDetails
+        );
+        if (cartRes) {
+          setAdded(true);
+          window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+        }
+      } catch (error: any) {
+        console.log(error);
+        setError(error.message);
+      }
     }
   };
 
@@ -118,14 +189,33 @@ const MedicinesPage: NextPage = () => {
         setSearchValue={setSearchValue}
       />
       <div className={classes.container}>
-        <Typography
-          variant='h3'
-          component='h2'
-          color='primary'
-          sx={{ marginTop: '1rem' }}
-        >
-          Purchase Medicines
-        </Typography>
+        <div className={classes.flex}>
+          <Typography
+            variant='h3'
+            component='h2'
+            color='primary'
+            sx={{ marginTop: '1rem' }}
+          >
+            Purchase Medicines
+          </Typography>
+          <Badge
+            color='secondary'
+            badgeContent={'.'}
+            invisible={!added}
+            sx={{ fontSize: '1.5rem' }}
+          >
+            <Button
+              variant='contained'
+              endIcon={<ShoppingCartIcon fontSize='inherit' />}
+              size='large'
+              aria-label='Cart Icon'
+              color='primary'
+              onClick={() => router.push(`/cart?id=${userId}`)}
+            >
+              View Cart
+            </Button>
+          </Badge>
+        </div>
         <div className={classes.cardContainer}>
           {medicines.map((el) => (
             <Card key={el.id} className={classes.card}>
@@ -139,13 +229,24 @@ const MedicinesPage: NextPage = () => {
                 <Typography variant='h6' color='primary' component='p'>
                   {el.name}
                 </Typography>
+                <Typography variant='body1' color='primary' component='p'>
+                  Pack Size: {el.pack_size}
+                </Typography>
+                <Typography
+                  className={classes.price}
+                  variant='h5'
+                  color='primary'
+                  component='p'
+                >
+                  &#8377; {el.price}
+                </Typography>
               </CardContent>
               <CardActions className={classes.cardActions}>
                 <div className={classes.count}>
                   <Button
                     className={classes.countBtn}
                     variant='outlined'
-                    onClick={() => updateCount(el.id, true)}
+                    onClick={() => updateCount(el.id, false)}
                   >
                     -
                   </Button>
@@ -154,14 +255,14 @@ const MedicinesPage: NextPage = () => {
                     variant='outlined'
                     sx={{ fontWeight: 900 }}
                   >
-                    {count.filter((ele) => ele.id === el.id)[0]
-                      ? count.filter((ele) => ele.id === el.id)[0].count
+                    {count.find((ele) => ele.id === el.id)
+                      ? count.find((ele) => ele.id === el.id)?.count
                       : 1}
                   </Button>
                   <Button
                     className={classes.countBtn}
                     variant='outlined'
-                    onClick={() => updateCount(el.id, false)}
+                    onClick={() => updateCount(el.id, true)}
                   >
                     +
                   </Button>
@@ -169,18 +270,39 @@ const MedicinesPage: NextPage = () => {
                 <Button
                   className={classes.cardBtn}
                   variant='contained'
-                  color='primary'
+                  color='secondary'
                   size='large'
                   startIcon={<ShoppingCart fontSize='inherit' />}
+                  sx={{ color: 'white' }}
+                  onClick={() => addToCart(el.id)}
                 >
-                  Cart
+                  Add
                 </Button>
               </CardActions>
             </Card>
           ))}
         </div>
+        <div className={classes.pagination}>
+          <Pagination count={10} color='secondary' size='large' />
+        </div>
       </div>
       <Footer />
+      {added ? (
+        <Snackbar
+          open={added ? true : false}
+          autoHideDuration={5000}
+          onClose={() => setAdded(false)}
+        >
+          <Alert
+            variant='filled'
+            severity='success'
+            onClose={() => setAdded(false)}
+            sx={{ fontSize: '1.1rem' }}
+          >
+            Added to cart
+          </Alert>
+        </Snackbar>
+      ) : null}
     </>
   );
 };

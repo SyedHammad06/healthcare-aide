@@ -47,15 +47,20 @@ const useStyles = makeStyles((theme) => ({
 
     '& li': {
       listStyle: 'none',
-    },
-
-    '& li a': {
       color: theme.palette.neutral.main,
       fontWeight: '600',
       opacity: '50%',
-      textDecoration: 'none',
       fontSize: '1.2rem',
       padding: '0.5rem',
+
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+
+    '& li a': {
+      textDecoration: 'none',
+      color: theme.palette.neutral.main,
     },
   },
   navIcon: {
@@ -109,6 +114,14 @@ export const Navbar: NextPage = () => {
     }
   };
 
+  const onMenuItemClick = (link: string) => {
+    if (!router.query.id) {
+      router.push('/login');
+    } else {
+      router.push(`/${link}?id=${router.query.id}`);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -130,12 +143,10 @@ export const Navbar: NextPage = () => {
           <li>
             <Link href='/'>Home</Link>
           </li>
-          <li>
-            <Link href='/medicines'>Purchase Medicines</Link>
+          <li onClick={() => onMenuItemClick('medicines')}>
+            Purchase Medicines
           </li>
-          <li>
-            <Link href='/tests'>Lab Tests</Link>
-          </li>
+          <li onClick={() => onMenuItemClick('tests')}>Lab Tests</li>
         </ul>
         <div className={classes.navIcon}>
           <IconButton aria-label='notifications'>
