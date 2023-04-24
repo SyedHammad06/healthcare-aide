@@ -3,7 +3,6 @@ import { makeStyles } from '@mui/styles';
 import { useEffect, useState } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import Card from '@mui/material/Card';
@@ -14,6 +13,17 @@ import Delete from '@mui/icons-material/Delete';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import Dialog from '@mui/material/Dialog';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Typography from '@mui/material/Typography';
+import AddressForm from '../components/AddressForm';
+import PaymentForm from '../components/PaymentForm';
+import Review from '../components/Review';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -91,14 +101,18 @@ type ItemType = {
   image: string;
 };
 
+const steps = ['Shipping address', 'Payment details', 'Review your order'];
+
 const CartPage: NextPage = () => {
   const classes = useStyles();
   const router = useRouter();
 
   //* State variables
   const [items, setItems] = useState<ItemType[]>([]);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [userId, setUserId] = useState('');
   const [error, setError] = useState('');
+  const [activeStep, setActiveStep] = useState(0);
 
   //* useEffect
   useEffect(() => {
@@ -142,6 +156,27 @@ const CartPage: NextPage = () => {
     } catch (error: any) {
       setError(error.message);
     }
+  };
+
+  function getStepContent(step: number) {
+    switch (step) {
+      case 0:
+        return <AddressForm />;
+      case 1:
+        return <PaymentForm />;
+      case 2:
+        return <Review />;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
+
+  const handleNext = () => {
+    setActiveStep(activeStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
   };
 
   return (
@@ -254,7 +289,7 @@ const CartPage: NextPage = () => {
                 Grand Total :
               </Typography>
               <Typography
-                variant='h6'
+                variant='h5'
                 color='secondary'
                 sx={{ fontWeight: 800 }}
               >
@@ -281,15 +316,60 @@ const CartPage: NextPage = () => {
               className={classes.btn}
               variant='contained'
               color='primary'
-              startIcon={<PaymentsIcon fontSize='large' />}
+              startIcon={<ShoppingCartCheckoutIcon fontSize='large' />}
+              onClick={() => setShowCheckout(true)}
               fullWidth
             >
-              Pay Now
+              Checkout
             </Button>
           </div>
         </div>
       </div>
       <Footer />
+      <Dialog onClose={() => setShowCheckout(false)} open={showCheckout}>
+        <Paper variant='outlined' sx={{ px: 4, py: 2 }}>
+          <Typography component='h1' variant='h4' align='center'>
+            Checkout
+          </Typography>
+          <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          {activeStep === steps.length ? (
+            <>
+              <Typography variant='h5' gutterBottom>
+                Thank you for your order.
+              </Typography>
+              <Typography variant='subtitle1'>
+                Your order number is #2001539. We will send you an update when
+                your order has shipped.
+              </Typography>
+            </>
+          ) : (
+            <>
+              {getStepContent(activeStep)}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {activeStep !== 0 && (
+                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                    Back
+                  </Button>
+                )}
+
+                <Button
+                  variant='contained'
+                  onClick={handleNext}
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Paper>
+      </Dialog>
     </div>
   );
 };
