@@ -11,10 +11,11 @@ import { PackagesSection } from '../../components/PackageSection';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import { TimingsType } from '../appointment/[...field]';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: '1rem 1.5rem 2rem 1.5rem',
+    padding: '1rem 1.5rem 1.5rem',
   },
   testsContainer: {},
   item: {
@@ -80,6 +81,7 @@ export type PackageType = {
   provided_by: string;
   location: string;
   image: string;
+  timings: TimingsType | any;
 };
 
 const LabTests: NextPage = () => {

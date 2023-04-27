@@ -141,7 +141,9 @@ export const Navbar: NextPage = () => {
       <nav className={classes.nav}>
         <ul>
           <li>
-            <Link href='/'>Home</Link>
+            <Link href={router.query.id ? `/?id=${router.query.id}` : '/'}>
+              Home
+            </Link>
           </li>
           <li onClick={() => onMenuItemClick('medicines')}>
             Purchase Medicines

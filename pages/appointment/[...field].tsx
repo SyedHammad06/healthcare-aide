@@ -145,7 +145,7 @@ type DayType = {
   end: number;
 };
 
-type TimingsType = {
+export type TimingsType = {
   morning?: DayType;
   afternoon?: DayType;
   evening?: DayType;

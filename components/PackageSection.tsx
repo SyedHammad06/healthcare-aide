@@ -112,7 +112,7 @@ export const PackagesSection: NextPage<Props> = ({ packages, userId }) => {
 
   const changeRoute = (field: string) => {
     if (userId) {
-      router.push(`/tests/${field}?id=${userId}`);
+      router.push(`/packages/${field}?id=${userId}`);
     } else {
       router.push(`/login`);
     }
