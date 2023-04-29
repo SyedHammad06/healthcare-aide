@@ -69,6 +69,7 @@ export type TestsType = {
   provided_by: string;
   location: string;
   image: string;
+  timings: TimingsType | any;
 };
 
 export type PackageType = {
@@ -157,6 +158,7 @@ const LabTests: NextPage = () => {
                     className={classes.btn}
                     variant='contained'
                     color='secondary'
+                    onClick={() => router.push(`/tests/${el.id}?id=${userId}`)}
                   >
                     Book
                   </Button>
