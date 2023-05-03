@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@mui/styles';
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, useRef } from 'react';
 import axios from 'axios';
 import { Footer } from '../../components/Footer';
 import { Navbar } from '../../components/Navbar';
@@ -20,8 +20,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Link from '../../src/Link';
+import Logout from '@mui/icons-material/Logout';
+import Email from '@mui/icons-material/Email';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Input from '@mui/material/Input';
+import Password from '@mui/icons-material/Password';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import { AccountCircle } from '@mui/icons-material';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,10 +59,16 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.3rem',
     display: 'grid',
     placeItems: 'center',
-    backgroundColor: theme.palette.secondary.main,
+    border: `5px solid ${theme.palette.secondary.main}`,
     borderRadius: '50%',
+    overflow: 'hidden',
   },
-  btn: {
+  editBtn: {
+    color: 'white',
+    fontSize: '1.1rem',
+    padding: '0.2rem 1rem',
+  },
+  logoutBtn: {
     color: 'white',
     fontSize: '1.2rem',
     padding: '0.5rem 2rem',
@@ -63,6 +80,42 @@ const useStyles = makeStyles((theme) => ({
   labelHeading: {
     fontSize: '1.2rem',
     fontWeight: 500,
+  },
+  form: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  field: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+
+    '& > label': {
+      flex: '10rem',
+    },
+
+    '& > div': {
+      flex: 'calc(100% - 5rem)',
+      marginTop: 'unset',
+    },
+  },
+  label: {
+    display: 'inline-block',
+    fontSize: '1.2rem',
+    color: theme.palette.primary.main,
+  },
+  input: {
+    fontSize: '1.2rem',
+
+    '&::after': {
+      borderBottom: `4px solid ${theme.palette.primary.main}`,
+    },
+  },
+  button: {
+    fontSize: '1.4rem',
   },
 }));
 
@@ -105,6 +158,12 @@ const UserDetails: NextPage = () => {
   const [packageData, setPacakageData] = useState<ScheduleType[]>([]);
   const [testData, setTestData] = useState<ScheduleType[]>([]);
   const [appointmentData, setAppointmentData] = useState<ScheduleType[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const emailRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   //* Functions
   useEffect(() => {
@@ -208,18 +267,16 @@ const UserDetails: NextPage = () => {
         <Grid container spacing={2} className={classes.container}>
           <Grid item xs={3} className={classes.avatarSection}>
             <div className={classes.avatarContainer}>
-              {userDetails?.avatar ? (
-                <div className={classes.avatarContainer}>
-                  <Image
-                    src={`http://127.0.0.1:8090/api/files/users/${router.query.id}/${userDetails?.avatar}`}
-                    width='150'
-                    height='150'
-                    alt='user avatar'
-                  />
-                </div>
-              ) : (
-                <AccountCircle color='secondary' fontSize='large' />
-              )}
+              <Image
+                src={
+                  userDetails?.avatar
+                    ? `http://127.0.0.1:8090/api/files/users/${router.query.id}/${userDetails?.avatar}`
+                    : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                }
+                width='180'
+                height='180'
+                alt='user avatar'
+              />
             </div>
           </Grid>
           <Grid item xs={6} className={classes.contentSection}>
@@ -240,6 +297,15 @@ const UserDetails: NextPage = () => {
                 .toString()
                 .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')}
             </Typography>
+            <Button
+              variant='contained'
+              color='secondary'
+              className={classes.editBtn}
+              startIcon={<EditIcon />}
+              onClick={() => setOpen(true)}
+            >
+              Edit Profile
+            </Button>
           </Grid>
           <Grid item xs={3} className={classes.avatarSection}>
             <Typography variant='body1' color='neutral.main'>
@@ -248,10 +314,11 @@ const UserDetails: NextPage = () => {
             <Button
               variant='contained'
               color='secondary'
-              className={classes.btn}
-              startIcon={<EditIcon />}
+              className={classes.logoutBtn}
+              startIcon={<Logout />}
+              onClick={() => router.push('/')}
             >
-              Edit Profile
+              Logout
             </Button>
           </Grid>
         </Grid>
@@ -544,6 +611,103 @@ const UserDetails: NextPage = () => {
         </div>
       </div>
       <Footer />
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>
+          <Typography variant='h6'>Edit your Profile</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ minWidth: '50vw' }}>
+          <form className={classes.form}>
+            <FormControl className={classes.field}>
+              <FormLabel className={classes.label} htmlFor='name'>
+                Name :
+              </FormLabel>
+              <Input
+                id='name'
+                type='text'
+                color='primary'
+                className={classes.input}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <AccountCircle color='primary' />
+                  </InputAdornment>
+                }
+                inputRef={nameRef}
+                placeholder={userDetails?.name}
+                required
+                fullWidth
+              />
+            </FormControl>
+            <FormControl className={classes.field}>
+              <FormLabel className={classes.label} htmlFor='email'>
+                Email Address :
+              </FormLabel>
+              <Input
+                id='email'
+                type='email'
+                color='primary'
+                className={classes.input}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <Email color='primary' />
+                  </InputAdornment>
+                }
+                inputRef={emailRef}
+                placeholder={userDetails?.email}
+                required
+                fullWidth
+              />
+            </FormControl>
+            <FormControl className={classes.field}>
+              <FormLabel className={classes.label} htmlFor='password'>
+                Password :
+              </FormLabel>
+              <Input
+                id='password'
+                type='text'
+                color='primary'
+                className={classes.input}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <Password color='primary' />
+                  </InputAdornment>
+                }
+                inputRef={passwordRef}
+                placeholder='*******'
+                required
+                fullWidth
+              />
+            </FormControl>
+            <FormControl className={classes.field}>
+              <FormLabel className={classes.label} htmlFor='number'>
+                Phone Number :
+              </FormLabel>
+              <Input
+                id='number'
+                type='tel'
+                color='primary'
+                className={classes.input}
+                startAdornment={
+                  <InputAdornment position='start'>
+                    <LocalPhoneIcon color='primary' />
+                  </InputAdornment>
+                }
+                inputRef={phoneRef}
+                placeholder={userDetails?.phone.toString()}
+                required
+                fullWidth
+              />
+            </FormControl>
+            <Button
+              className={classes.button}
+              variant='contained'
+              type='submit'
+              fullWidth
+            >
+              Update
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
