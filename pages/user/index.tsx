@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type UserDetailsType = {
+export type UserDetailsType = {
   id: string;
   username: string;
   email: string;

@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
+import { UserDetailsType } from '../pages/user';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -81,6 +82,7 @@ export const Navbar: NextPage = () => {
   const router = useRouter();
 
   const [avatar, setAvatar] = useState('');
+  const [userDetails, setUserDetails] = useState<UserDetailsType>();
 
   useEffect(() => {
     (async () => {
@@ -90,7 +92,9 @@ export const Navbar: NextPage = () => {
             `http://127.0.0.1:8090/api/collections/users/records/${router.query.id}`
           )
           .then((res) => res.data);
-        console.log(user);
+        if (user) {
+          setUserDetails(user);
+        }
         if (user.avatar) {
           setAvatar(user.avatar);
         }
@@ -149,6 +153,9 @@ export const Navbar: NextPage = () => {
             Purchase Medicines
           </li>
           <li onClick={() => onMenuItemClick('tests')}>Lab Tests</li>
+          {userDetails?.isDoctor ? (
+            <li onClick={() => onMenuItemClick('records')}>Medical Records</li>
+          ) : null}
         </ul>
         <div className={classes.navIcon}>
           <IconButton aria-label='notifications'>
